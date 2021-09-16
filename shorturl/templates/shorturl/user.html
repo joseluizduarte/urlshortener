@@ -1,0 +1,88 @@
+{% extends 'shorturl/base.html' %}
+
+{% block loginIcon %}
+<li class="nav-item dropdown d-flex">
+    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    {{user.username}}
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+        <li><a class="dropdown-item" href="{% url 'shorturl:logoutPage' %}">Logout</a></li>
+        <li><a class="dropdown-item" >Account settings</a></li>
+    </ul>
+</li>
+{% endblock loginIcon %}
+
+{% block mainContent %}
+<div class="container mb-3">
+        <div class="row justify-content-lg-center">
+            <div class="col col-lg-8 mt-2">
+            {% if template_option == "pos_edit" %}
+            <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+                <symbol id="check-circle-fill" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                </symbol>
+            </svg>
+            <div class="alert alert-success d-flex align-items-center alert-dismissible fade show" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
+                <div>
+                The Url has been deleted successfully!
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endif %}
+                <!-- Nav Tabs -->
+                <nav>
+                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                        <button class="nav-link active" id="newurl-tab" data-bs-toggle="tab" data-bs-target="#newurl" type="button" role="tab" aria-controls="newurl" aria-selected="true">New URL</button>
+                        <button class="nav-link" id="myurls-tab" data-bs-toggle="tab" data-bs-target="#myurls" type="button" role="tab" aria-controls="myurls" aria-selected="false">My URLs</button>
+                    </div>
+                </nav>
+                <!-- Tabs -->            
+                <div class="tab-content" id="nav-tabContent">
+                    <!-- New URL Tab -->
+                    <div class="tab-pane fade show active" id="newurl" role="tabpanel" aria-labelledby="nav-home-tab">
+                        <!-- Short URL form -->
+                        <div class="card text-center mt-1">
+                            <div class="card-body">
+                                <h5 class="card-title">URL</h5>
+                                <form method="POST" action="{% url 'shorturl:user' %}">
+                                    {% csrf_token %}
+                                    <input type="url" name="url" class="form-control mb-3" required>
+                                    <input type="submit" class="btn btn-primary" value="Create Short URL">
+                                </form>
+                            </div>
+                        </div>
+                        <!-- New Short URL link -->
+                        {% if new_url is not none %}
+                        <div class="card text-center mt-1">
+                            <div class="card-body">
+                                <h5 class="card-title mb-4"><a href="{{new_url}}">{{new_url}}</a></h5>
+                                <p>Your Short URL is already working.</p>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <!-- My URLs Tab -->
+                    <div class="tab-pane fade" id="myurls" role="tabpanel" aria-labelledby="myurls-tab">                   
+                        <ul class="list-group">
+                            {% for url,access_number in my_urls %}
+                            <form action="{% url 'shorturl:urlDetails' %}" method="POST">
+                                {% csrf_token %}
+                                <button type="submit" name="url" value="{{url.url_id}}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-start">
+                                    <div class="ms-2 me-auto">
+                                        <div class="fw-bold">{{url}}</div>
+                                        {{url.url_redirect}}
+                                    </div>
+                                    <span class="badge bg-primary rounded-pill">{{access_number}}</span>
+                                </button>
+                            </form>
+                            {%endfor%}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
+</main>
+{% endblock mainContent %}
+

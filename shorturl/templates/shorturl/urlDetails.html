@@ -1,0 +1,89 @@
+{% extends 'shorturl/base.html' %}
+
+{% block loginIcon %}
+<li class="nav-item dropdown d-flex">
+    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    {{user.username}}
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+        <li><a class="dropdown-item" href="{% url 'shorturl:logoutPage' %}">Logout</a></li>
+        <li><a class="dropdown-item" >Account settings</a></li>
+    </ul>
+</li>
+{% endblock loginIcon %}
+
+{% block mainContent %}
+<div class="container mb-3">
+<div class="row justify-content-lg-center">
+<div class="col col-lg-8 mt-2">
+    <a class="nav-link active" aria-current="page" href="{% url 'shorturl:user' %}">Back</a>
+    {% if template_option == "pos_edit" %}
+    <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+        <symbol id="check-circle-fill" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+        </symbol>
+    </svg>
+    <div class="alert alert-success d-flex align-items-center alert-dismissible fade show" role="alert">
+        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
+        <div>
+        The Url Redirect has been updated successfully!
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">{{url_id}}</h5>
+            <h6 class="card-subtitle mb-2 text-muted">{{url_redirect}}</h6>
+            <span class="badge bg-primary rounded-pill mb-2">{{access_number}} access</span>
+            <ul class="list-group">
+                {% for acces in url_access %}
+                <li class="list-group-item d-flex justify-content-between align-items-start" aria-current="true">
+                    <div class="ms-2 me-auto">
+                        <div class="fw-bold">{{acces.date_time}}</div>
+                        {{acces.ip}}
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+            {% if template_option == "details" or template_option == "pos_edit" %}
+            <form action="{% url 'shorturl:urlDetails' %}" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="url" value="{{url_id}}">
+                <button type="submit" name="template_option" value="edit" class="btn btn-secondary mt-2">Edit URL Redirect</button>
+                <button type="submit" name="template_option" value="delete" class="btn btn-danger mt-2">Delete URL</button>
+            </form>
+            {% elif template_option == "edit" %}
+            <form action="{% url 'shorturl:urlDetails' %}" method="POST" class="mt-5">
+                {% csrf_token %}
+                <label for="new_redirect" class="form-label">New Redirect</label>
+                <input type="hidden" name="url" value="{{url_id}}">
+                <input type="url" class="form-control" id="new_redirect" name="new_redirect">
+                <button type="submit" class="btn btn-secondary mt-2">Edit URL Redirect</button>
+            </form>
+            {% elif template_option == "delete" %}
+            <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+                <symbol id="exclamation-triangle-fill" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                </symbol>
+            </svg>
+            <div class="alert alert-danger d-flex align-items-center mt-5" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+                <div>
+                    Are you sure you want to delete this url? It will not be possible to retrieve it.
+                </div>
+            </div>
+            <form action="{% url 'shorturl:urlDetails' %}" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="url" value="{{url_id}}">
+                <button type="submit" name="delete_action" value="1" class="btn btn-danger">I want to delete this URL</button>
+            </form>
+            {% endif %}
+            
+        </div>
+    </div>
+</div>
+</div>
+</div>
+</main>
+{% endblock mainContent %}

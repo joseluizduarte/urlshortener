@@ -1,0 +1,21 @@
+{% extends 'shorturl/base.html' %}
+
+{% load static %}
+
+{% block title %}URL Shortener - ShortURL{% endblock title %}
+
+{% block mainContent %}
+<div class="container mb-3">
+    <div class="row justify-content-lg-center">
+        <div class="col col-lg-6">
+            <div class="card text-center mt-1">
+                <div class="card-body">
+                    <h5 class="card-title mb-4"><a href="{{new_url}}">{{new_url}}</a></h5>
+                    <p>Your Short URL is already working.</p>
+                    <a href="{% url 'shorturl:home' %}" class="btn btn-outline-primary btn-sm mt-5">Create another Short URL</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock mainContent %}

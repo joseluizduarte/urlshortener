@@ -1,0 +1,19 @@
+{% extends 'shorturl/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}URL Shortener - Login{% endblock title %}
+
+{% block mainContent %}
+<div class="container mb-3 mt-4">
+    <div class="row justify-content-lg-center">
+        <div class="col col-lg-6">
+            <form method="POST">
+                {% csrf_token %}
+                {{form|crispy}}
+                <input type="submit" class="form-control mt-3" value="Login">
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock mainContent %}
